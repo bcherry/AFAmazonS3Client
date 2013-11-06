@@ -382,6 +382,11 @@ NSString * AFBase64EncodedStringFromData(NSData *data) {
             }
             [formData appendPartWithFileData:data name:@"file" fileName:[filePath lastPathComponent] mimeType:[response MIMEType]];
         }];
+
+        // Multi-part requests don't receive Content-Type
+        [[self authorizationHeadersForRequest:request] enumerateKeysAndObjectsUsingBlock:^(id field, id value, BOOL *stop) {
+            [request setValue:value forHTTPHeaderField:field];
+        }];
 		
         AFHTTPRequestOperation *requestOperation = [self HTTPRequestOperationWithRequest:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
             if (success) {
